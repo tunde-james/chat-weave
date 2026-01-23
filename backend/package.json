@@ -4,15 +4,13 @@
   "description": "",
   "main": "src/server.ts",
   "scripts": {
-    "dev": "tsx watch src/server.ts"
+    "dev": "tsx watch src/server.ts",
+    "migrate": "tsx src/db/migrate.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.28.1",
-  "prettier": {
-    "singleQuote": true
-  },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.5",
     "@types/cors": "^2.8.19",
@@ -23,6 +21,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@clerk/express": "^1.7.64",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "5.2.1",

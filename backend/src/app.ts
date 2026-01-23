@@ -4,9 +4,12 @@ import helmet from 'helmet';
 
 import { notFoundHandler } from './middleware/not-found-handler';
 import { errorHandler } from './middleware/error-handler';
+import { clerkMiddleware } from './config/clerk';
 
 export function createApp() {
   const app = express();
+
+  app.use(clerkMiddleware());
 
   app.use(helmet());
   app.use(

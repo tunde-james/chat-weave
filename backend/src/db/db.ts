@@ -13,7 +13,7 @@ export const pool = new Pool({
 
 export async function query<T extends QueryResultRow = QueryResultRow>(
   text: string,
-  params: unknown,
+  params?: unknown,
 ): Promise<QueryResult<T>> {
   const result = await pool.query<T>(text, params as any[]);
 
