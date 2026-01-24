@@ -1,13 +1,16 @@
 import { UserProfile } from './user.types';
 import { clerkClient } from '../../config/clerk';
-import { upsertUserFromClerkProfile } from './user.repository';
+import {
+  repoUpdateUserProfile,
+  upsertUserFromClerkProfile,
+} from './user.repository';
 
 async function fetchClerkProfile(clerkUserId: string) {
   const clerkUser = await clerkClient.users.getUser(clerkUserId);
 
   const getFullName =
     (clerkUser.firstName || '') +
-    (clerkUser.lastName ? `${clerkUser.lastName}` : '');
+    (clerkUser.lastName ? ` ${clerkUser.lastName}` : '');
   const fullName = getFullName.trim().length > 0 ? getFullName : null;
 
   const primaryEmail =
@@ -38,6 +41,32 @@ export async function getUserFromClerk(
 
   return {
     user,
+    clerkEmail: email,
+    clerkFullName: fullName,
+  };
+}
+
+export async function updateUserProfile(params: {
+  clerkUserId: string;
+  displayName?: string;
+  handle?: string;
+  bio?: string;
+  avatarUrl?: string;
+}): Promise<UserProfile> {
+  const { clerkUserId, displayName, handle, bio, avatarUrl } = params;
+
+  const updatedUser = await repoUpdateUserProfile({
+    clerkUserId,
+    displayName,
+    handle,
+    bio,
+    avatarUrl,
+  });
+
+  const { fullName, email } = await fetchClerkProfile(clerkUserId);
+
+  return {
+    user: updatedUser,
     clerkEmail: email,
     clerkFullName: fullName,
   };
