@@ -34,7 +34,7 @@ export async function upsertUserFromClerkProfile(params: {
         id,
         clerk_user_id,
         display_name,
-        handle
+        handle,
         avatar_url,
         bio,
         created_at,

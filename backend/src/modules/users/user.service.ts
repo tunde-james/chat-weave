@@ -8,7 +8,7 @@ async function fetchClerkProfile(clerkUserId: string) {
   const getFullName =
     (clerkUser.firstName || '') +
     (clerkUser.lastName ? `${clerkUser.lastName}` : '');
-  const fullName = getFullName.trim().length > 0 ? getFullName.trim() : null;
+  const fullName = getFullName.trim().length > 0 ? getFullName : null;
 
   const primaryEmail =
     clerkUser.emailAddresses.find(
