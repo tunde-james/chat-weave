@@ -18,7 +18,7 @@ async function bootstrap() {
       logger.info(`Server is listening to port: http://localhost:${port}`);
     });
   } catch (err) {
-    logger.error(`Failed to start the server:, ${err}`);
+    logger.error(`Failed to start the server: ${err}`);
     process.exit(1);
   }
 }
