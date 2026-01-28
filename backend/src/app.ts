@@ -21,7 +21,8 @@ export function createApp() {
   );
   app.use(express.json());
 
-  app.use('/api/v1/users', apiRouter)
+  app.use('/api/v1/users', apiRouter);
+  app.use('/api/v1/threads', apiRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
