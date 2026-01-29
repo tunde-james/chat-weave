@@ -52,3 +52,5 @@ export async function apiPatch<TBody, TResponse>(
 
   return res.data.data;
 }
+
+// implement apiPost

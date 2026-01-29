@@ -5,5 +5,5 @@ import { threadsRouter } from './threads.routes';
 
 export const apiRouter = Router();
 
-apiRouter.use('/me', userRouter);
+apiRouter.use('/users/me', userRouter);
 apiRouter.use('/threads', threadsRouter);

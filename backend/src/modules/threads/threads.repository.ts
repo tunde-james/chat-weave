@@ -69,7 +69,7 @@ export async function createThread(params: {
     `
       SELECT id
       FROM categories
-      WHERE id = $1
+      WHERE slug = $1
       LIMIT 1
     `,
     [categorySlug],

@@ -1,9 +1,11 @@
+import ThreadsHomePage from '@/components/threads/threads-home';
 
-
-export default function Home() {
+const ThreadsPage = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center font-sans">
-      <p className="text-white">Homepage</p>
+    <div className="flex w-full   flex-1 flex-col">
+      <ThreadsHomePage />
     </div>
   );
-}
+};
+
+export default ThreadsPage;

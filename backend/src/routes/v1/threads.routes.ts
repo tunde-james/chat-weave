@@ -24,7 +24,7 @@ threadsRouter.get('/categories', async (_req, res, next) => {
   }
 });
 
-threadsRouter.post('/threads', async (req, res, next) => {
+threadsRouter.post('/', async (req, res, next) => {
   try {
     const auth = getAuth(req);
     if (!auth.userId) {
@@ -48,7 +48,7 @@ threadsRouter.post('/threads', async (req, res, next) => {
   }
 });
 
-threadsRouter.get('/threads/:threadId', async (req, res, next) => {
+threadsRouter.get('/:threadId', async (req, res, next) => {
   try {
     const threadId = Number(req.params.threadId);
 
@@ -72,7 +72,7 @@ threadsRouter.get('/threads/:threadId', async (req, res, next) => {
   }
 });
 
-threadsRouter.get('/threads', async (req, res, next) => {
+threadsRouter.get('/', async (req, res, next) => {
   try {
     const filter = parseThreadListFilter({
       page: req.query.page,
