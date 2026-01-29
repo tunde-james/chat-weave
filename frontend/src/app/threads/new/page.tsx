@@ -86,8 +86,8 @@ const NewThreadsPage = () => {
         description: 'Your thread is noe live!',
       });
 
-      // router.push('/');
-      router.push(`/${created?.id}`);
+      router.push('/');
+      // router.push(`/${created?.id}`);
     } catch (error) {
     } finally {
       setIsSubmitting(false);
@@ -143,7 +143,11 @@ const NewThreadsPage = () => {
                 className="h-10 mt-3 w-full rounded-md border border-border bg-background/70 px-3 text-sm text-foreground focus:outline focus:ring-2 focus:ring-primary/30"
               >
                 {categories.map((category) => (
-                  <option key={category.slug} id={category.slug}>
+                  <option
+                    value={category.slug}
+                    key={category.slug}
+                    id={category.slug}
+                  >
                     {category.name}
                   </option>
                 ))}

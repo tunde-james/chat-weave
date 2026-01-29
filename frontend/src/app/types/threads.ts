@@ -21,3 +21,18 @@ export type ThreadDetail = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type ThreadSummary = {
+  id: number;
+  title: string;
+  excerpt: string;
+  category: {
+    slug: string;
+    name: string;
+  };
+  author: {
+    displayName: string | null;
+    handle: string | null;
+  };
+  createdAt: string;
+};

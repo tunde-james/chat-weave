@@ -29,7 +29,7 @@ const Navbar = () => {
       <Link
         key={item.href}
         href={item.href}
-        className="flex items-center rounded-full px-3 py-2 text-sm font-medium transition-colors text-primary shadow-sm bg-primary/20"
+        className="flex items-center rounded-full px-3 py-2 text-sm font-medium transition-colors bg-primary/20 text-primary shadow-sm"
       >
         {item.label}
       </Link>
