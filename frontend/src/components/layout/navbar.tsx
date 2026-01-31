@@ -1,15 +1,76 @@
 'use client';
 
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { SignedIn, SignedOut, useAuth, UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Button } from '../ui/button';
 import { Bell, Menu, X } from 'lucide-react';
+import { useSocket } from '@/hooks/use-socket';
+import { useNotificationCount } from '@/hooks/use-notification-count';
+import { apiGet, createApiClient } from '@/lib/api-client';
+import { Notification } from '@/types/notification.types';
+import { toast } from 'sonner';
 
 const Navbar = () => {
-  const [unreadCount, setUnreadCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const { getToken, userId } = useAuth();
+  const { socket } = useSocket();
+
+  const { unreadCount, setUnreadCount, incrementUnread } =
+    useNotificationCount();
+
+  const apiClient = useMemo(() => createApiClient(getToken), [getToken]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadUnreadNotifications() {
+      if (!userId) {
+        if (isMounted) setUnreadCount(0);
+        return;
+      }
+
+      try {
+        const data = await apiGet<Notification[]>(
+          apiClient,
+          '/api/v1/notifications?unreadOnly=true',
+        );
+
+        if (!isMounted) return;
+        console.log(data);
+
+        setUnreadCount(data.length);
+      } catch (error) {
+        if (!isMounted) return;
+        console.log(`Error occurred`);
+      }
+    }
+
+    loadUnreadNotifications();
+  }, [userId]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNewNotification = (payload: Notification) => {
+      incrementUnread();
+
+      toast('New Notification', {
+        description:
+          payload.type === 'REPLY_ON_THREAD'
+            ? `${payload.actor.handle ?? 'Someone'} commented on your thread`
+            : `${payload.actor.handle ?? 'Someone'} liked your thread`,
+      });
+    };
+
+    socket.on('notification:new', handleNewNotification);
+
+    return () => {
+      socket.off('notification:new', handleNewNotification);
+    };
+  }, [socket, incrementUnread]);
 
   const navItems = [
     {
@@ -45,7 +106,7 @@ const Navbar = () => {
             className="flex items-center gap-2 font-bold text-lg text-sidebar-foreground"
           >
             <span className="bg-linear-to-r from-primary to-chart-2 bg-clip-text text-transparent">
-              Ace
+              ChatWeave
             </span>
             <span className="text-foreground/90">Forum</span>
           </Link>
@@ -69,7 +130,7 @@ const Navbar = () => {
                 </span>
               </Button>
             </Link>
-            <UserButton afterSignOutUrl="/" />
+            <UserButton />
           </SignedIn>
           <SignedOut>
             <Link href="/sign-in">

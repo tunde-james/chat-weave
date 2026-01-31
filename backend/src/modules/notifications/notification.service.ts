@@ -146,19 +146,20 @@ export async function listNotificationsForUser(params: {
   userId: number;
   unreadOnly: boolean;
 }) {
-  const { userId, unreadOnly } = params;
+  try {
+    const { userId, unreadOnly } = params;
 
-  const conditions = ['n.user_id = $1'];
-  const values: unknown = [userId];
+    const conditions = ['n.user_id = $1'];
+    const values: unknown = [userId];
 
-  if (unreadOnly) {
-    conditions.push('n.read_at IS NULL');
-  }
+    if (unreadOnly) {
+      conditions.push('n.read_at IS NULL');
+    }
 
-  const whereClause = `WHERE ${conditions.join(' AND ')}`;
+    const whereClause = `WHERE ${conditions.join(' AND ')}`;
 
-  const result = await query(
-    `
+    const result = await query(
+      `
       SELECT 
         n.id,
         n.type,
@@ -174,12 +175,16 @@ export async function listNotificationsForUser(params: {
       ${whereClause}
       ORDER BY n.created_at DESC
     `,
-    values,
-  );
+      values,
+    );
 
-  return result.rows.map((notification) =>
-    mapNotificationsRow(notification as NotificationRow),
-  );
+    return result.rows.map((notification) =>
+      mapNotificationsRow(notification as NotificationRow),
+    );
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
 }
 
 export async function markNotificationAsRead(params: {
