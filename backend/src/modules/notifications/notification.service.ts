@@ -1,4 +1,5 @@
 import { query } from '../../db/db';
+import { getIO } from '../../realtime/io';
 import { mapNotificationsRow, NotificationRow } from './notification.types';
 
 export async function createReplyNotification(params: {
@@ -62,6 +63,13 @@ export async function createReplyNotification(params: {
 
   // emit first socket event
   // notification:new
+  const io = getIO();
+  if (io) {
+    io.to(`notifications:user:${authorUserId}`).emit(
+      'notification:new',
+      payload,
+    );
+  }
 }
 
 export async function createLikeNotification(params: {
@@ -125,6 +133,13 @@ export async function createLikeNotification(params: {
 
   // emit first socket event
   // notification:new
+  const io = getIO();
+  if (io) {
+    io.to(`notifications:user:${authorUserId}`).emit(
+      'notification:new',
+      payload,
+    );
+  }
 }
 
 export async function listNotificationsForUser(params: {
@@ -183,6 +198,5 @@ export async function markNotificationAsRead(params: {
   );
 }
 
-
-// TODO: Create a function to handle marking all notifications 
+// TODO: Create a function to handle marking all notifications
 // as read at once
