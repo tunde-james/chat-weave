@@ -4,7 +4,7 @@ import { useAuth } from '@clerk/nextjs';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
-import { Comment, MeResponse, ThreadDetail } from '@/app/types/threads';
+import { Comment, MeResponse, ThreadDetail } from '@/types/threads.types';
 import { apiGet, createApiClient } from '@/lib/api-client';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, MessageCircle, ThumbsUp, Trash2Icon } from 'lucide-react';

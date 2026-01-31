@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 
-import { Category, ThreadDetail } from '@/app/types/threads';
+import { Category, ThreadDetail } from '@/types/threads.types';
 import { apiGet, createApiClient } from '@/lib/api-client';
 import { NewThreadFormValues, newThreadSchema } from '../threads.schema';
 import {

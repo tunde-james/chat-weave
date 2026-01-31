@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
 import { apiGet, createApiClient } from '@/lib/api-client';
-import { Category, ThreadSummary } from '@/app/types/threads';
+import { Category, ThreadSummary } from '@/types/threads.types';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Plus, Search } from 'lucide-react';
