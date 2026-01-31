@@ -20,6 +20,9 @@ export type ThreadDetail = {
   };
   createdAt: string;
   updatedAt: string;
+  likeCount: number;
+  replyCount: number;
+  viewerHasLikedThisPostOrNot: boolean;
 };
 
 export type ThreadSummary = {
@@ -35,4 +38,19 @@ export type ThreadSummary = {
     handle: string | null;
   };
   createdAt: string;
+};
+
+export type Comment = {
+  id: number;
+  body: string;
+  createdAt: string;
+  author: {
+    displayName: string | null;
+    handle: string | null;
+  };
+};
+
+export type MeResponse = {
+  id: number;
+  handle: string | null;
 };

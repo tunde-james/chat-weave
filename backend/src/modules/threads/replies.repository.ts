@@ -148,7 +148,7 @@ export async function getThreadDetailsWithCount(params: {
 }) {
   const { threadId, viewerUserId } = params;
 
-  const threadDetails = getThreadById(threadId);
+  const threadDetails = await getThreadById(threadId);
 
   const likeResult = await query(
     `
