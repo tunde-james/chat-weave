@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from 'express';
 import { clerkMiddleware, getAuth, clerkClient } from '@clerk/express';
-import { UnauthorizedError } from '../lib/errors';
+import { UnauthorizedError } from '../lib/app-error';
 
 export { clerkMiddleware, clerkClient, getAuth };
 

@@ -8,7 +8,6 @@ import {
   listThreads,
   parseThreadListFilter,
 } from '../../modules/threads/threads.repository';
-import { BadRequestError, UnauthorizedError } from '../../lib/errors';
 import { createThreadSchema } from '../../modules/threads/threads.schema';
 import { getUserFromClerk } from '../../modules/users/user.service';
 import {
@@ -20,7 +19,11 @@ import {
   listRepliesForThread,
   unlikeThreadOnce,
 } from '../../modules/threads/replies.repository';
-import { createLikeNotification, createReplyNotification } from '../../modules/notifications/notification.service';
+import {
+  createLikeNotification,
+  createReplyNotification,
+} from '../../modules/notifications/notification.service';
+import { BadRequestError, UnauthorizedError } from '../../lib/app-error';
 
 export const threadsRouter = Router();
 
@@ -149,8 +152,8 @@ threadsRouter.post('/:threadId/replies', async (req, res, next) => {
     // TODO: Trigger notification here later
     await createReplyNotification({
       threadId,
-      actorUserId: profile.user.id
-    })
+      actorUserId: profile.user.id,
+    });
 
     res.status(201).json({ data: reply });
   } catch (error) {
@@ -207,10 +210,10 @@ threadsRouter.post('/:threadId/like', async (req, res, next) => {
     });
 
     // Notification -> logic here
-     await createLikeNotification({
+    await createLikeNotification({
       threadId,
-      actorUserId: profile.user.id
-    })
+      actorUserId: profile.user.id,
+    });
 
     res.status(204).send();
   } catch (error) {
