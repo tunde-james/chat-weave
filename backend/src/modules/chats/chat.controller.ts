@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 
 import { getAuth } from '../../config/clerk';
-import { UnauthorizedError } from '../../lib/app-error';
+import { BadRequestError, UnauthorizedError } from '../../lib/app-error';
 import { getUserFromClerk } from '../users/user.service';
 import { listChatUsers, listDirectMessages } from './chat.service';
 
@@ -36,6 +36,10 @@ export const getConversationMessagesController = async (
 
   const rawOtherUserId = req.params.otherUserId;
   const otherUserId = Number(rawOtherUserId);
+
+  if (!Number.isInteger(otherUserId) || otherUserId <= 0) {
+    throw new BadRequestError('Invalid otherUserId');
+  }
 
   const limitParam = req.query.limit;
   const limit = typeof limitParam === 'string' ? parseInt(limitParam, 10) : 100;

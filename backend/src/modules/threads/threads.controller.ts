@@ -87,6 +87,10 @@ export const getRepliesController = async (
   }
 
   const threadId = Number(req.params.threadId);
+  if (!Number.isInteger(threadId) || threadId <=0) {
+    throw new BadRequestError('Invalid thread id')
+  }
+
   const replies = await listRepliesForThread(threadId);
 
   res.json({ data: replies });
