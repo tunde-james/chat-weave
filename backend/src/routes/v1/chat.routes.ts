@@ -1,62 +1,15 @@
 import { Router } from 'express';
 
-import { getAuth } from '../../config/clerk';
-import { getUserFromClerk } from '../../modules/users/user.service';
+import { asyncHandler } from '../../lib/async-handler';
 import {
-  listChatUsers,
-  listDirectMessages,
-} from '../../modules/chats/chat.service';
+  getChatUsersController,
+  getConversationMessagesController,
+} from '../../modules/chats/chat.controller';
 
 export const chatRouter = Router();
 
-chatRouter.get('/users', async (req, res, next) => {
-  try {
-    const auth = getAuth(req);
-
-    if (!auth.userId) {
-      return res.status(401).json({ error: 'Not authenticated' });
-    }
-
-    const profile = await getUserFromClerk(auth.userId);
-    const currentUserId = profile.user.id as number;
-
-    const users = await listChatUsers(currentUserId);
-
-    res.json({ data: users });
-  } catch (error) {
-    next(error);
-  }
-});
-
+chatRouter.get('/users', asyncHandler(getChatUsersController));
 chatRouter.get(
   '/conversations/:otherUserId/messages',
-  async (req, res, next) => {
-    try {
-      const auth = getAuth(req);
-
-      if (!auth.userId) {
-        return res.status(401).json({ error: 'Not authenticated' });
-      }
-
-      const profile = await getUserFromClerk(auth.userId);
-      const currentUserId = profile.user.id as number;
-
-      const rawOtherUserId = req.params.otherUserId;
-      const otherUserId = Number(rawOtherUserId);
-
-      const limitParam = req.query.limit;
-      const limit =
-        typeof limitParam === 'string' ? parseInt(limitParam, 10) : 100;
-
-      const messages = await listDirectMessages({
-        userId: currentUserId,
-        otherUserId,
-        limit: limit || 50,
-      });
-
-      res.json({ data: messages });
-    } catch (error) {
-      next(error);
-    }
-  },
+  asyncHandler(getConversationMessagesController),
 );

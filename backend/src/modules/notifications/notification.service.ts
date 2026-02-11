@@ -203,5 +203,15 @@ export async function markNotificationAsRead(params: {
   );
 }
 
-// TODO: Create a function to handle marking all notifications
-// as read at once
+export async function markAllNotificationsAsRead(
+  userId: number,
+): Promise<void> {
+  await query(
+    `
+      UPDATE notifications
+      SET read_at = COALESCE(read_at, NOW())
+      WHERE user_id = $1 AND read_at IS NULL
+    `,
+    [userId],
+  );
+}
