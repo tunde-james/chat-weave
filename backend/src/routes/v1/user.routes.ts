@@ -1,12 +1,12 @@
 import { Router } from 'express';
 
 import { getAuth } from '../../config/clerk';
-import { UnauthorizedError } from '../../lib/errors';
 import {
   toResponse,
   userProfileUpdateSchema,
 } from '../../modules/users/user.schema';
 import { getUserFromClerk, updateUserProfile } from '../../modules/users/user.service';
+import { UnauthorizedError } from '../../lib/app-error';
 
 export const userRouter = Router();
 

@@ -1,5 +1,6 @@
 import { query } from '../../db/db';
-import { BadRequestError, NotFoundError } from '../../lib/errors';
+import { BadRequestError, NotFoundError } from '../../lib/app-error';
+
 import { getThreadById } from './threads.repository';
 
 export async function listRepliesForThread(threadId: number) {

@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import { getAuth } from '../../config/clerk';
-import { BadRequestError, UnauthorizedError } from '../../lib/errors';
 import { getUserFromClerk } from '../../modules/users/user.service';
 import {
   listNotificationsForUser,
   markNotificationAsRead,
 } from '../../modules/notifications/notification.service';
+import { BadRequestError, UnauthorizedError } from '../../lib/app-error';
 
 export const notificationRouter = Router();
 

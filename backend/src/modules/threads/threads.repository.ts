@@ -1,5 +1,5 @@
 import { query } from '../../db/db';
-import { BadRequestError, NotFoundError } from '../../lib/errors';
+import { BadRequestError, NotFoundError } from '../../lib/app-error';
 import {
   Category,
   CategoryRow,
