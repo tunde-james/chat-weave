@@ -27,7 +27,7 @@ export const requestLoggerMiddleware = (
         statusCode,
         duration,
         userAgent: req.get('user-agent'),
-        if: req.ip || req.socket.remoteAddress,
+        ip: req.ip || req.socket.remoteAddress,
       },
     );
   });

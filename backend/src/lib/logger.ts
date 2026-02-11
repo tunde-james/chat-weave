@@ -1,5 +1,6 @@
 import winston from 'winston';
 import path from 'path';
+import fs from 'node:fs';
 
 import { env } from '../config/env.config';
 
@@ -7,7 +8,7 @@ const isProduction = env.NODE_ENV === 'production';
 
 const colors = {
   error: 'red',
-  warm: 'yellow',
+  warn: 'yellow',
   info: 'green',
   http: 'magenta',
   debug: 'white',
@@ -63,6 +64,7 @@ const transports: winston.transport[] = [
 
 if (isProduction) {
   const logsDir = path.join(process.cwd(), 'logs');
+  fs.mkdirSync(logsDir, { recursive: true });
 
   transports.push(
     new winston.transports.File({

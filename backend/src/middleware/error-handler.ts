@@ -55,7 +55,7 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
     requestId,
   };
 
-  if (details) {
+  if (details !== undefined) {
     response.details = details;
   }
 
