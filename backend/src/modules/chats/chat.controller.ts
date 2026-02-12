@@ -54,10 +54,6 @@ export const getChatUsersController = async (
  *     responses:
  *       200:
  *         description: List of messages
- *        400:
- *         $ref: '#/components/responses/BadRequestError'
- *       401:
- *         $ref: '#/components/responses/UnauthorizedError'
  */
 export const getConversationMessagesController = async (
   req: Request,

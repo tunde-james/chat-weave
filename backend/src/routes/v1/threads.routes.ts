@@ -12,6 +12,7 @@ import {
   listThreadsController,
   unlikeThreadController,
 } from '../../modules/threads/threads.controller';
+import { createActionRateLimiter } from '../../middleware/rate-limit.middleware';
 
 export const threadsRouter = Router();
 
@@ -27,8 +28,20 @@ threadsRouter.get('/', asyncHandler(listThreadsController));
 threadsRouter.get('/:threadId', asyncHandler(getThreadByIdController));
 threadsRouter.get('/:threadId/replies', asyncHandler(getRepliesController));
 
-threadsRouter.post('/', asyncHandler(createThreadController));
-threadsRouter.post('/:threadId/replies', asyncHandler(createReplyController));
+threadsRouter.post(
+  '/',
+  createActionRateLimiter,
+  asyncHandler(createThreadController),
+);
+threadsRouter.post(
+  '/:threadId/replies',
+  createActionRateLimiter,
+  asyncHandler(createReplyController),
+);
 threadsRouter.delete('/replies/:replyId', asyncHandler(deleteReplyController));
-threadsRouter.post('/:threadId/like', asyncHandler(likeThreadController));
+threadsRouter.post(
+  '/:threadId/like',
+  createActionRateLimiter,
+  asyncHandler(likeThreadController),
+);
 threadsRouter.delete('/:threadId/like', asyncHandler(unlikeThreadController));

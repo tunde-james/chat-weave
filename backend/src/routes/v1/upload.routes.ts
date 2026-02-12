@@ -4,6 +4,7 @@ import multer from 'multer';
 import { cloudinary } from '../../config/cloudinary.config';
 import { BadRequestError } from '../../lib/app-error';
 import { HTTP_STATUS } from '../../config/http-status.config';
+import { uploadRateLimiter } from '../../middleware/rate-limit.middleware';
 
 export const uploadRouter = Router();
 
@@ -65,6 +66,7 @@ const upload = multer({
  */
 uploadRouter.post(
   '/image-upload',
+  uploadRateLimiter,
   upload.single('file'),
   async (req: Request, res, next) => {
     try {
