@@ -54,7 +54,16 @@ export function createApiClient(
 
   client.interceptors.response.use(
     (response) => response,
-    (error: AxiosError<{ message?: string; details?: unknown }>) => {
+    (error: unknown) => {
+      if (!axios.isAxiosError(error)) {
+        return Promise.reject(
+          new ApiError(
+            500,
+            error instanceof Error ? error.message : String(error),
+          ),
+        );
+      }
+
       return Promise.reject(ApiError.fromAxiosError(error));
     },
   );
