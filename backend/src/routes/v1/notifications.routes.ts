@@ -9,6 +9,13 @@ import {
 
 export const notificationRouter = Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Notifications
+ *   description: Notification management endpoints
+ */
+
 notificationRouter.get('/', asyncHandler(getNotificationsController));
 notificationRouter.post(
   '/:id/read',

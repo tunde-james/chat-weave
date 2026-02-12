@@ -5,6 +5,18 @@ import { BadRequestError, UnauthorizedError } from '../../lib/app-error';
 import { getUserFromClerk } from '../users/user.service';
 import { listChatUsers, listDirectMessages } from './chat.service';
 
+/**
+ * @swagger
+ * /api/v1/chat/users:
+ *   get:
+ *     summary: Get chat users list
+ *     tags: [Chat]
+ *     responses:
+ *       200:
+ *         description: List of users for chat
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ */
 export const getChatUsersController = async (
   req: Request,
   res: Response,
@@ -22,6 +34,27 @@ export const getChatUsersController = async (
   res.json({ data: users });
 };
 
+/**
+ * @swagger
+ * /api/v1/chat/conversations/{otherUserId}/messages:
+ *   get:
+ *     summary: Get messages with a user
+ *     tags: [Chat]
+ *     parameters:
+ *       - in: path
+ *         name: otherUserId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Number of messages to return
+ *     responses:
+ *       200:
+ *         description: List of messages
+ */
 export const getConversationMessagesController = async (
   req: Request,
   res: Response,

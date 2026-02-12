@@ -19,6 +19,9 @@ async function bootstrap() {
 
     server.listen(port, () => {
       logger.info(`Server is listening to port: http://localhost:${port}`);
+      logger.info(
+        `Swagger Docs available at: http://localhost:${port}/api-docs`,
+      );
     });
   } catch (err) {
     logger.error(`Failed to start the server: ${err}`);

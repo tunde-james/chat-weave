@@ -8,5 +8,12 @@ import {
 
 export const userRouter = Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: User profile management endpoints
+ */
+
 userRouter.get('/', asyncHandler(getCurrentUserController));
 userRouter.patch('/', asyncHandler(updateCurrentUserController));
