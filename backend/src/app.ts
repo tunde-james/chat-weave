@@ -10,6 +10,7 @@ import { apiRouter } from './routes/v1';
 import { requestIdMiddleware } from './middleware/request-id.middleware';
 import { requestLoggerMiddleware } from './middleware/request-logger.middleware';
 import { swaggerSpec } from './config/swagger.config';
+import { generalRateLimiter } from './middleware/rate-limit.middleware';
 
 export function createApp() {
   const app = express();
@@ -27,6 +28,8 @@ export function createApp() {
 
   app.use(requestIdMiddleware);
   app.use(requestLoggerMiddleware);
+
+  app.use(generalRateLimiter);
 
   app.use(clerkMiddleware());
 
