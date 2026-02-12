@@ -25,6 +25,17 @@ import {
   createReplyNotification,
 } from '../notifications/notification.service';
 
+/**
+ * @swagger
+ * /api/v1/threads/categories:
+ *   get:
+ *     summary: Get all thread categories
+ *     tags: [Threads]
+ *     security: []
+ *     responses:
+ *       200:
+ *         description: List of categories
+ */
 export const getCategoriesController = async (
   _req: Request,
   res: Response,
@@ -34,6 +45,43 @@ export const getCategoriesController = async (
   res.json({ data: categories });
 };
 
+/**
+ * @swagger
+ * /api/v1/threads:
+ *   get:
+ *     summary: Get all threads with filters
+ *     tags: [Threads]
+ *     security: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Page number
+ *       - in: query
+ *         name: pageSize
+ *         schema:
+ *           type: integer
+ *         description: Items per page
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *         description: Filter by category slug
+ *       - in: query
+ *         name: q
+ *         schema:
+ *           type: string
+ *         description: Search query
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *         description: Sort order
+ *     responses:
+ *       200:
+ *         description: Paginated list of threads
+ */
 export const listThreadsController = async (
   req: Request,
   res: Response,
@@ -51,6 +99,26 @@ export const listThreadsController = async (
   res.json({ data: threads });
 };
 
+/**
+ * @swagger
+ * /api/v1/threads/{threadId}:
+ *   get:
+ *     summary: Get thread by ID
+ *     tags: [Threads]
+ *     parameters:
+ *       - in: path
+ *         name: threadId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Thread details
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       404:
+ *         $ref: '#/components/responses/NotFoundError'
+ */
 export const getThreadByIdController = async (
   req: Request,
   res: Response,
@@ -77,6 +145,22 @@ export const getThreadByIdController = async (
   res.json({ data: thread });
 };
 
+/**
+ * @swagger
+ * /api/v1/threads/{threadId}/replies:
+ *   get:
+ *     summary: Get replies for a thread
+ *     tags: [Threads]
+ *     parameters:
+ *       - in: path
+ *         name: threadId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: List of replies
+ */
 export const getRepliesController = async (
   req: Request,
   res: Response,
@@ -87,8 +171,8 @@ export const getRepliesController = async (
   }
 
   const threadId = Number(req.params.threadId);
-  if (!Number.isInteger(threadId) || threadId <=0) {
-    throw new BadRequestError('Invalid thread id')
+  if (!Number.isInteger(threadId) || threadId <= 0) {
+    throw new BadRequestError('Invalid thread id');
   }
 
   const replies = await listRepliesForThread(threadId);
@@ -96,6 +180,35 @@ export const getRepliesController = async (
   res.json({ data: replies });
 };
 
+/**
+ * @swagger
+ * /api/v1/threads:
+ *   post:
+ *     summary: Create a new thread
+ *     tags: [Threads]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - body
+ *               - categorySlug
+ *             properties:
+ *               title:
+ *                 type: string
+ *               body:
+ *                 type: string
+ *               categorySlug:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Thread created successfully
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ */
 export const createThreadController = async (
   req: Request,
   res: Response,
@@ -118,6 +231,33 @@ export const createThreadController = async (
   res.status(HTTP_STATUS.CREATED).json({ data: newThread });
 };
 
+/**
+ * @swagger
+ * /api/v1/threads/{threadId}/replies:
+ *   post:
+ *     summary: Create a reply to a thread
+ *     tags: [Threads]
+ *     parameters:
+ *       - in: path
+ *         name: threadId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - body
+ *             properties:
+ *               body:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Reply created successfully
+ */
 export const createReplyController = async (
   req: Request,
   res: Response,
@@ -154,6 +294,22 @@ export const createReplyController = async (
   res.status(HTTP_STATUS.CREATED).json({ data: reply });
 };
 
+/**
+ * @swagger
+ * /api/v1/threads/replies/{replyId}:
+ *   delete:
+ *     summary: Delete a reply
+ *     tags: [Threads]
+ *     parameters:
+ *       - in: path
+ *         name: replyId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Reply deleted successfully
+ */
 export const deleteReplyController = async (
   req: Request,
   res: Response,
@@ -181,6 +337,22 @@ export const deleteReplyController = async (
   res.status(HTTP_STATUS.NO_CONTENT).send();
 };
 
+/**
+ * @swagger
+ * /api/v1/threads/{threadId}/like:
+ *   post:
+ *     summary: Like a thread
+ *     tags: [Threads]
+ *     parameters:
+ *       - in: path
+ *         name: threadId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Thread liked successfully
+ */
 export const likeThreadController = async (
   req: Request,
   res: Response,
@@ -211,6 +383,22 @@ export const likeThreadController = async (
   res.status(HTTP_STATUS.NO_CONTENT).send();
 };
 
+/**
+ * @swagger
+ * /api/v1/threads/{threadId}/like:
+ *   delete:
+ *     summary: Unlike a thread
+ *     tags: [Threads]
+ *     parameters:
+ *       - in: path
+ *         name: threadId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Thread unliked successfully
+ */
 export const unlikeThreadController = async (
   req: Request,
   res: Response,

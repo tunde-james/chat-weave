@@ -8,6 +8,13 @@ import {
 
 export const chatRouter = Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Chat
+ *   description: Real-time chat endpoints
+ */
+
 chatRouter.get('/users', asyncHandler(getChatUsersController));
 chatRouter.get(
   '/conversations/:otherUserId/messages',

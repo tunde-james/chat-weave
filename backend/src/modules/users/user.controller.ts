@@ -5,6 +5,25 @@ import { UnauthorizedError } from '../../lib/app-error';
 import { getUserFromClerk, updateUserProfile } from './user.service';
 import { toResponse, userProfileUpdateSchema } from './user.schema';
 
+/**
+ * @swagger
+ * /api/v1/users/me:
+ *   get:
+ *     summary: Get current user profile
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: User profile data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ */
 export const getCurrentUserController = async (
   req: Request,
   res: Response,
@@ -20,6 +39,35 @@ export const getCurrentUserController = async (
   res.json({ data: response });
 };
 
+/**
+ * @swagger
+ * /api/v1/users/me:
+ *   patch:
+ *     summary: Update current user profile
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               displayName:
+ *                 type: string
+ *               handle:
+ *                 type: string
+ *               bio:
+ *                 type: string
+ *               avatarUrl:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Updated user profile
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       400:
+ *         $ref: '#/components/responses/BadRequestError'
+ */
 export const updateCurrentUserController = async (
   req: Request,
   res: Response,

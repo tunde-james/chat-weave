@@ -15,6 +15,13 @@ import {
 
 export const threadsRouter = Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Threads
+ *   description: Thread management endpoints
+ */
+
 threadsRouter.get('/categories', asyncHandler(getCategoriesController));
 threadsRouter.get('/', asyncHandler(listThreadsController));
 threadsRouter.get('/:threadId', asyncHandler(getThreadByIdController));

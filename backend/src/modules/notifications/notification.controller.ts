@@ -10,6 +10,24 @@ import {
 } from './notification.service';
 import { HTTP_STATUS } from '../../config/http-status.config';
 
+/**
+ * @swagger
+ * /api/v1/notifications:
+ *   get:
+ *     summary: Get user notifications
+ *     tags: [Notifications]
+ *     parameters:
+ *       - in: query
+ *         name: unreadOnly
+ *         schema:
+ *           type: boolean
+ *         description: Filter to unread notifications only
+ *     responses:
+ *       200:
+ *         description: List of notifications
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ */
 export const getNotificationsController = async (
   req: Request,
   res: Response,
@@ -31,6 +49,22 @@ export const getNotificationsController = async (
   res.json({ data: notifications });
 };
 
+/**
+ * @swagger
+ * /api/v1/notifications/{id}/read:
+ *   post:
+ *     summary: Mark a notification as read
+ *     tags: [Notifications]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Notification marked as read
+ */
 export const markNotificationReadController = async (
   req: Request,
   res: Response,
@@ -55,6 +89,16 @@ export const markNotificationReadController = async (
   res.status(204).send();
 };
 
+/**
+ * @swagger
+ * /api/v1/notifications/read-all:
+ *   post:
+ *     summary: Mark all notifications as read
+ *     tags: [Notifications]
+ *     responses:
+ *       204:
+ *         description: All notifications marked as read
+ */
 export const markAllNotificationsReadController = async (
   req: Request,
   res: Response,
