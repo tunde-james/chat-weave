@@ -4,6 +4,36 @@ import axios, {
   type AxiosInstance,
 } from 'axios';
 
+export class ApiError extends Error {
+  public readonly status: number;
+  public readonly code?: string;
+  public readonly details?: unknown;
+
+  constructor(
+    status: number,
+    message: string,
+    code?: string,
+    details?: unknown,
+  ) {
+    super(message);
+    this.status = status;
+    this.code = code;
+    this.details = details;
+    this.name = 'ApiError';
+  }
+
+  static fromAxiosError(
+    error: AxiosError<{ message?: string; details?: unknown }>,
+  ): ApiError {
+    const status = error.response?.status ?? 500;
+    const message =
+      error.response?.data?.message ?? error.message ?? 'An error occurred';
+    const details = error.response?.data?.details;
+
+    return new ApiError(status, message, error.code, details);
+  }
+}
+
 export function createApiClient(
   getToken: () => Promise<string | null>,
 ): AxiosInstance {
@@ -24,8 +54,17 @@ export function createApiClient(
 
   client.interceptors.response.use(
     (response) => response,
-    (error: AxiosError) => {
-      return Promise.reject(error);
+    (error: unknown) => {
+      if (!axios.isAxiosError(error)) {
+        return Promise.reject(
+          new ApiError(
+            500,
+            error instanceof Error ? error.message : String(error),
+          ),
+        );
+      }
+
+      return Promise.reject(ApiError.fromAxiosError(error));
     },
   );
 
@@ -37,9 +76,20 @@ export async function apiGet<T>(
   url: string,
   config?: AxiosRequestConfig,
 ): Promise<T> {
-  const response = await client.get<{ data: T }>(url, config);
+  const res = await client.get<{ data: T }>(url, config);
 
-  return response.data.data;
+  return res.data.data;
+}
+
+export async function apiPost<TBody, TResponse>(
+  client: AxiosInstance,
+  url: string,
+  body: TBody,
+  config?: AxiosRequestConfig,
+): Promise<TResponse> {
+  const res = await client.post<{ data: TResponse }>(url, body, config);
+
+  return res.data.data;
 }
 
 export async function apiPatch<TBody, TResponse>(
@@ -53,4 +103,10 @@ export async function apiPatch<TBody, TResponse>(
   return res.data.data;
 }
 
-// implement apiPost
+export async function apiDelete(
+  client: AxiosInstance,
+  url: string,
+  config?: AxiosRequestConfig,
+): Promise<void> {
+  await client.delete(url, config);
+}
