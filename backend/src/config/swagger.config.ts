@@ -1,4 +1,18 @@
+import path from 'path';
 import swaggerJsdoc from 'swagger-jsdoc';
+
+import { env } from './env.config';
+
+const apiGlobs =
+  env.NODE_ENV === 'production'
+    ? [
+        path.resolve(__dirname, '../routes/**/*.js'),
+        path.resolve(__dirname, '../modules/**/*.controller.js'),
+      ]
+    : [
+        path.resolve(__dirname, '../routes/**/*.ts'),
+        path.resolve(__dirname, '../modules/**/*.controller.ts'),
+      ];
 
 const swaggerOptions: swaggerJsdoc.Options = {
   definition: {
@@ -157,7 +171,7 @@ const swaggerOptions: swaggerJsdoc.Options = {
       },
     ],
   },
-  apis: ['./src/routes/**/*.ts', './src/modules/**/*.controller.ts'],
+  apis: apiGlobs,
 };
 
 export const swaggerSpec = swaggerJsdoc(swaggerOptions);
