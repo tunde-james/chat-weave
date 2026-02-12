@@ -6,6 +6,7 @@ import './globals.css';
 import { Toaster } from 'sonner';
 import Navbar from '@/components/layout/navbar';
 import { NotificationCountProvider } from '@/hooks/use-notification-count';
+import { QueryProvider } from '@/lib/query-provider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -33,17 +34,19 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <NotificationCountProvider>
-            <div className="flex min-h-screen flex-col bg-background text-foreground">
-              <Navbar />
-              <main className="flex flex-1 flex-col">
-                <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 py-8 md:py-10">
-                  {children}
-                </div>
-              </main>
-            </div>
-            <Toaster />
-          </NotificationCountProvider>
+          <QueryProvider>
+            <NotificationCountProvider>
+              <div className="flex min-h-screen flex-col bg-background text-foreground">
+                <Navbar />
+                <main className="flex flex-1 flex-col">
+                  <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 py-8 md:py-10">
+                    {children}
+                  </div>
+                </main>
+              </div>
+              <Toaster />
+            </NotificationCountProvider>
+          </QueryProvider>
         </body>
       </html>
     </ClerkProvider>
