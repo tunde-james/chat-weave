@@ -30,6 +30,7 @@ import { useProfile, useUpdateProfile } from '@/hooks/use-profile';
 const ProfilePage = () => {
   const { data: profile, isLoading, error } = useProfile();
   const updateProfileMutation = useUpdateProfile();
+  const isSaving = updateProfileMutation.isPending;
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(ProfileSchema),
@@ -252,16 +253,16 @@ const ProfilePage = () => {
                     <CardFooter className="p-0">
                       <Button
                         type="submit"
-                        disabled={isLoading}
+                        disabled={isSaving}
                         className="min-w-37.5 bg-primary text-primary-foreground hover:bg-primary/90"
                       >
-                        {isLoading ? (
+                        {isSaving ? (
                           <Loader2 className="mr-2 w-4 h-4 animate-spin" />
                         ) : (
                           <Save className="mr-2 w-4 h-4" />
                         )}
 
-                        {isLoading ? 'Saving...' : 'Save Changes'}
+                        {isSaving ? 'Saving...' : 'Save Changes'}
                       </Button>
                     </CardFooter>
                   </form>
