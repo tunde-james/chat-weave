@@ -42,7 +42,7 @@ const ThreadsHomePage = () => {
       params.set('category', categoryVal);
     }
 
-    if (search.trim()) {
+    if (searchVal.trim()) {
       params.set('q', searchVal.trim());
     }
 

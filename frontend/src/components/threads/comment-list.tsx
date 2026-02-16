@@ -45,7 +45,7 @@ const CommentList = ({
                 ) : null}
 
                 <span className="text-xs text-muted-foreground">
-                  {new Date(comment.createdAt).toLocaleDateString('en-US', {
+                  {new Date(comment.createdAt).toLocaleString('en-US', {
                     month: 'short',
                     day: 'numeric',
                     year: 'numeric',
@@ -62,6 +62,7 @@ const CommentList = ({
                   variant="ghost"
                   size="sm"
                   className="h-8 px-2 text-xs text-destructive hover:bg-destructive/10 hover:text-destructive"
+                  aria-label="Delete comment"
                 >
                   <Trash2Icon className="w-5 h-5" />
                 </Button>

@@ -76,7 +76,7 @@ const ThreadDetailsPage = () => {
         isLiked={thread.viewerHasLikedThisPostOrNot}
         likeCount={thread.likeCount}
         onToggleLike={handleToggleLike}
-        isTogglingLike={toggleLikeMutation.isPaused}
+        isTogglingLike={toggleLikeMutation.isPending}
       />
 
       <CommentSection threadId={id} />

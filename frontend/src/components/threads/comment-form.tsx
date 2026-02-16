@@ -18,17 +18,23 @@ const CommentForm = ({ onAddComment, isPosting }: CommentFormProps) => {
   const handleSubmit = async () => {
     if (!newComment.trim()) return;
 
-    await onAddComment(newComment.trim());
-    setNewComment('');
+    try {
+      await onAddComment(newComment.trim());
+      setNewComment('');
+    } catch {}
   };
 
   return (
     <div className="space-y-3 border-t border-border pt-6">
-      <label htmlFor="" className="block text-sm font-semibold text-foreground">
+      <label
+        htmlFor="comment-input"
+        className="block text-sm font-semibold text-foreground"
+      >
         Add your reply
       </label>
 
       <Textarea
+        id="comment-input"
         value={newComment}
         onChange={(event) => setNewComment(event.target.value)}
         rows={5}
