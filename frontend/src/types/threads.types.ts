@@ -54,3 +54,5 @@ export type MeResponse = {
   id: number;
   handle: string | null;
 };
+
+export type ThreadDetails = ThreadDetail;
