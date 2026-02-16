@@ -83,7 +83,7 @@ const NotificationItem = ({
           <div className="mt-2 flex items-center gap-2">
             <Badge
               variant="outline"
-              className="border-primary/30 bg-primary/10 text-[12px text-primary]"
+              className="border-primary/30 bg-primary/10 text-[12px] text-primary"
             >
               New
             </Badge>

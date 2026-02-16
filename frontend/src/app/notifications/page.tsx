@@ -80,7 +80,7 @@ const NotificationPage = () => {
             <AlertCircle className="h-5 w-5 text-destructive" />
             <p className="text-sm text-destructive">
               {error.message ||
-                'Failed to load notifications.Please try again.'}
+                'Failed to load notifications. Please try again.'}
             </p>
           </CardContent>
         )}
