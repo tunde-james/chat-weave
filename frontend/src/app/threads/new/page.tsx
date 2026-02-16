@@ -1,13 +1,10 @@
 'use client';
 
-import { useAuth } from '@clerk/nextjs';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 
-import { Category, ThreadDetail } from '@/types/threads.types';
-import { apiGet, createApiClient } from '@/lib/api-client';
 import { NewThreadFormValues, newThreadSchema } from '../threads.schema';
 import {
   Card,
@@ -20,77 +17,45 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useCategories, useCreateThread } from '@/hooks/use-threads';
 
 const NewThreadsPage = () => {
-  const { getToken } = useAuth();
   const router = useRouter();
-
-  const apiClient = useMemo(() => createApiClient(getToken), [getToken]);
-
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data: categories = [], isLoading } = useCategories();
+  const createThreadMutation = useCreateThread();
+  const isSubmitting = createThreadMutation.isPending;
 
   const form = useForm<NewThreadFormValues>({
     resolver: zodResolver(newThreadSchema),
-    defaultValues: {
-      title: '',
-      body: '',
-      categorySlug: '',
-    },
+    values:
+      categories.length > 0
+        ? {
+            title: '',
+            body: '',
+            categorySlug: categories[0].slug,
+          }
+        : {
+            title: '',
+            body: '',
+            categorySlug: '',
+          },
   });
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function load() {
-      setIsLoading(true);
-
-      try {
-        const extractCats = await apiGet<Category[]>(
-          apiClient,
-          '/api/v1/threads/categories',
-        );
-
-        if (!isMounted) return;
-
-        setCategories(extractCats);
-
-        if (extractCats.length > 0) {
-          form.setValue('categorySlug', extractCats[0]?.slug);
-        }
-      } catch (e) {
-        console.log(e);
-      } finally {
-        if (isMounted) setIsLoading(false);
-      }
-    }
-
-    load();
-  }, [apiClient, form]);
 
   const OnThreadSubmit = async (values: NewThreadFormValues) => {
     try {
-      setIsSubmitting(true);
-
-      // Add a new method in apiClient file -> apiPost
-      const response = await apiClient.post('/api/v1/threads', {
+      const created = await createThreadMutation.mutateAsync({
         title: values.title,
         body: values.body,
         categorySlug: values.categorySlug,
       });
 
-      const created = response?.data?.data as ThreadDetail;
-
       toast.success('New thread created successfully!', {
-        description: 'Your thread is noe live!',
+        description: 'Your thread is now live!',
       });
 
       router.push('/');
-      // router.push(`/${created?.id}`);
     } catch (error) {
-    } finally {
-      setIsSubmitting(false);
+      toast.error('Failed to create thread');
     }
   };
 

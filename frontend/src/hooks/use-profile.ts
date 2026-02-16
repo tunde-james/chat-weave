@@ -1,9 +1,9 @@
 import { useAuth } from '@clerk/nextjs';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useMemo } from 'react';
 
-import { apiGet, apiPatch, createApiClient } from '@/lib/api-client';
+import { apiGet, apiPatch } from '@/lib/api-client';
 import { ProfileFormValues, UserResponse } from '@/app/profile/profile.schema';
+import { useApiClient } from './use-api-client';
 
 export const profileKeys = {
   all: ['profile'] as const,
@@ -11,8 +11,8 @@ export const profileKeys = {
 };
 
 export const useProfile = () => {
-  const { getToken, isSignedIn } = useAuth();
-  const apiClient = useMemo(() => createApiClient(getToken), [getToken]);
+  const { isSignedIn } = useAuth();
+  const apiClient = useApiClient();
 
   return useQuery({
     queryKey: profileKeys.me(),
@@ -22,8 +22,7 @@ export const useProfile = () => {
 };
 
 export const useUpdateProfile = () => {
-  const { getToken } = useAuth();
-  const apiClient = useMemo(() => createApiClient(getToken), [getToken]);
+  const apiClient = useApiClient();
   const queryClient = useQueryClient();
 
   return useMutation({

@@ -1,159 +1,71 @@
 'use client';
 
-import { useAuth } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 
-import { apiGet, createApiClient } from '@/lib/api-client';
-import { Category, ThreadSummary } from '@/types/threads.types';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent, CardHeader } from '../ui/card';
 import { Button } from '../ui/button';
 import { Plus, Search } from 'lucide-react';
 import { Input } from '../ui/input';
-import { Badge } from '../ui/badge';
+import { useCategories, useThreads } from '@/hooks/use-threads';
+import CategorySidebar from './category-sidebar';
+import ErrorDisplay from './error-display';
+import ThreadCard from './thread-card';
 
 const ThreadsHomePage = () => {
-  const { getToken } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const apiClient = useMemo(() => createApiClient(getToken), [getToken]);
-
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [threads, setThreads] = useState<ThreadSummary[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [search, setSearch] = useState(searchParams.get('q') ?? '');
   const [activeCategory, setActiveCategory] = useState(
     searchParams.get('category') ?? 'all',
   );
-  // error state
 
-  useEffect(() => {
-    let isMounted = true;
+  const {
+    data: categories = [],
+    isLoading: isCategoriesLoading,
+    error: categoriesError,
+  } = useCategories();
 
-    const load = async () => {
-      try {
-        setIsLoading(true);
+  const {
+    data: threads = [],
+    isLoading: isThreadLoading,
+    error: threadsError,
+    refetch: refetchThreads,
+  } = useThreads({ category: activeCategory, search: search });
 
-        const [extractCategories, extractThreads] = await Promise.all([
-          apiGet<Category[]>(apiClient, '/api/v1/threads/categories'),
-          apiGet<ThreadSummary[]>(apiClient, '/api/v1/threads', {
-            params: {
-              category:
-                activeCategory && activeCategory !== 'all'
-                  ? activeCategory
-                  : undefined,
-              q: search || undefined,
-            },
-          }),
-        ]);
-
-        if (!isMounted) return;
-
-        setCategories(extractCategories);
-        setThreads(extractThreads);
-      } catch (error) {
-        console.log(error);
-        //Handle error state in case of error and render
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    load();
-  }, [apiClient]);
-
-  const applyFilters = async (
-    currentCategoryVal: string,
-    currentSearchVal: string,
-  ) => {
+  const applyFilters = (categoryVal: string, searchVal: string) => {
     const params = new URLSearchParams();
 
-    if (currentCategoryVal && currentCategoryVal !== 'all') {
-      params.set('category', currentCategoryVal);
+    if (categoryVal && categoryVal !== 'all') {
+      params.set('category', categoryVal);
     }
 
-    if (currentSearchVal.trim()) {
-      params.set('q', currentSearchVal.trim());
+    if (search.trim()) {
+      params.set('q', searchVal.trim());
     }
 
     router.push(`?${params.toString()}`);
+    setActiveCategory(categoryVal);
 
-    setIsLoading(true);
-
-    try {
-      const threadsListAfterSearchAndFilter = await apiGet<ThreadSummary[]>(
-        apiClient,
-        '/api/v1/threads',
-        {
-          params: {
-            category:
-              currentCategoryVal && currentCategoryVal !== 'all'
-                ? currentCategoryVal
-                : undefined,
-            q: currentSearchVal || undefined,
-          },
-        },
-      );
-
-      setThreads(threadsListAfterSearchAndFilter);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
+    refetchThreads();
   };
+
+  const handleCategoryChange = (slug: string) => {
+    applyFilters(slug, search);
+  };
+
+  const isLoading = isCategoriesLoading || isThreadLoading;
 
   return (
     <div className="flex w-full flex-col gap-6 lg:flex-row">
-      <aside className="w-full shrink-0 lg:w-72">
-        <Card className="sticky top-24 border-sidebar-border bg-card">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Categories</CardTitle>
-              <Link href="/threads/new">
-                <Button
-                  size="icon"
-                  className="h-8 w-8 rounded-full bg-primary text-primary-foreground shadow-sm shadow-primary/40"
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
-              </Link>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <button
-              onClick={() => {
-                setActiveCategory('all');
-                applyFilters('all', search);
-              }}
-              className="cursor-pointer flex w-full items-center px-3 py-3 text-sm font-medium transition-colors text-muted-foreground hover:bg-card/80 hover:text-foreground"
-            >
-              All categories
-            </button>
-            {isLoading && (
-              <div className="flex items-center justify-center rounded-lg border border-border bg-card py-10">
-                <p className="text-sm text-muted-foreground">
-                  Loading categories...
-                </p>
-              </div>
-            )}
-            {categories.map((cat) => (
-              <button
-                key={cat.slug}
-                onClick={() => {
-                  setActiveCategory(cat.slug);
-                  applyFilters(cat.slug, search);
-                }}
-                className="cursor-pointer flex w-full items-center px-3 py-3 text-sm font-medium transition-colors text-muted-foreground hover:bg-card/80 hover:text-foreground"
-              >
-                {cat.name}
-              </button>
-            ))}
-          </CardContent>
-        </Card>
-      </aside>
+      <CategorySidebar
+        categories={categories}
+        activeCategory={activeCategory}
+        isLoading={isCategoriesLoading}
+        onCategoryChange={handleCategoryChange}
+      />
 
       <div className="flex-1 space-y-6">
         <Card className="border-border/70 bg-card/95">
@@ -195,7 +107,17 @@ const ThreadsHomePage = () => {
         </Card>
 
         <div className="space-y-4">
-          {isLoading ? (
+          {(categoriesError || threadsError) && (
+            <ErrorDisplay
+              message={
+                categoriesError?.message ||
+                threadsError?.message ||
+                'Failed to load data. Please try again'
+              }
+            />
+          )}
+
+          {isLoading && !categoriesError && !threadsError ? (
             <div className="flex items-center justify-center rounded-lg border border-border lg-card py-10">
               <p className="text-sm text-muted-foreground">
                 Loading threads...
@@ -203,7 +125,7 @@ const ThreadsHomePage = () => {
             </div>
           ) : null}
 
-          {!isLoading && threads.length === 0 ? (
+          {!isLoading && !threadsError && threads.length === 0 ? (
             <Card className="border-dashed border-border bg-card">
               <CardContent className="py-10 text-center">
                 <p className="text-sm text-muted-foreground">
@@ -214,48 +136,9 @@ const ThreadsHomePage = () => {
           ) : null}
 
           {!isLoading &&
+            !threadsError &&
             threads.map((thread) => (
-              <Card
-                key={thread.id}
-                className="group cursor-pointer border-border/70 bg-card transition-colors duration-150 hover:border-primary/70 hover:bg-card/90"
-              >
-                <Link href={`/threads/${thread.id}`}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 space-y-2 ">
-                        <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                          <Badge
-                            variant="outline"
-                            className="border-border/70 bg-secondary/70 text-[12px]"
-                          >
-                            {thread.category.name}
-                          </Badge>
-
-                          {thread?.author?.handle ? (
-                            <span className="text-muted-foreground/90">
-                              by @{thread?.author.handle}
-                            </span>
-                          ) : null}
-
-                          <span className="text-muted-foreground/85">
-                            {new Date(thread.createdAt).toLocaleDateString()}
-                          </span>
-                        </div>
-
-                        <CardTitle className="text-lg font-semibold text-foreground group-hover:text-primary">
-                          {thread.title}
-                        </CardTitle>
-                      </div>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="space-y-3 pb-4 ">
-                    <p className="line-clamp-2 text-sm text-muted-foreground">
-                      {thread.excerpt}
-                    </p>
-                  </CardContent>
-                </Link>
-              </Card>
+              <ThreadCard key={thread.id} thread={thread} />
             ))}
         </div>
       </div>
