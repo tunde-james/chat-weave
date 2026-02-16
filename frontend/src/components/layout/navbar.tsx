@@ -1,55 +1,21 @@
 'use client';
 
-import { SignedIn, SignedOut, useAuth, UserButton } from '@clerk/nextjs';
+import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '../ui/button';
 import { Bell, Menu, X } from 'lucide-react';
 import { useSocket } from '@/hooks/use-socket';
-import { useNotificationCount } from '@/hooks/use-notification-count';
-import { apiGet, createApiClient } from '@/lib/api-client';
 import { Notification } from '@/types/notification.types';
 import { toast } from 'sonner';
+import { useIncrementUnreadCount, useUnreadNotificationCount } from '@/hooks/use-notifications';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const { getToken, userId } = useAuth();
   const { socket } = useSocket();
-
-  const { unreadCount, setUnreadCount, incrementUnread } =
-    useNotificationCount();
-
-  const apiClient = useMemo(() => createApiClient(getToken), [getToken]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadUnreadNotifications() {
-      if (!userId) {
-        if (isMounted) setUnreadCount(0);
-        return;
-      }
-
-      try {
-        const data = await apiGet<Notification[]>(
-          apiClient,
-          '/api/v1/notifications?unreadOnly=true',
-        );
-
-        if (!isMounted) return;
-        console.log(data);
-
-        setUnreadCount(data.length);
-      } catch (error) {
-        if (!isMounted) return;
-        console.log(`Error occurred`);
-      }
-    }
-
-    loadUnreadNotifications();
-  }, [userId]);
+  const { data: unreadCount = 0 } = useUnreadNotificationCount()
+  const incrementUnread = useIncrementUnreadCount()
 
   useEffect(() => {
     if (!socket) return;

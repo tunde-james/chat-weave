@@ -1,26 +1,24 @@
-import { useAuth } from '@clerk/nextjs';
-import { useEffect, useMemo, useState } from 'react';
-
 import {
   useCreateComment,
   useDeleteComment,
   useThreadReplies,
 } from '@/hooks/use-threads';
-import { apiGet, createApiClient } from '@/lib/api-client';
-import { MeResponse } from '@/types/threads.types';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { MessageCircle } from 'lucide-react';
 import CommentList from './comment-list';
 import CommentForm from './comment-form';
 import { useProfile } from '@/hooks/use-profile';
+import { useAuth } from '@clerk/nextjs';
 
 interface CommentSectionProps {
   threadId: number;
 }
 
 const CommentSection = ({ threadId }: CommentSectionProps) => {
-  const { data: comments = [], isLoading } = useThreadReplies(threadId);
+  const { userId } = useAuth();
+  const { data: comments = [], isLoading: loadingComments } =
+    useThreadReplies(threadId);
   const { data: profile } = useProfile();
   const addCommentMutation = useCreateComment(threadId);
   const deleteCommentMutation = useDeleteComment(threadId);
@@ -62,7 +60,7 @@ const CommentSection = ({ threadId }: CommentSectionProps) => {
       </CardHeader>
 
       <CardContent className="space-y-6">
-        {isLoading ? (
+        {loadingComments ? (
           <p className="py-8 text-center text-sm text-muted-foreground">
             Loading comment(s)...
           </p>

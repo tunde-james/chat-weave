@@ -1,8 +1,6 @@
-import { useAuth } from '@clerk/nextjs';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useMemo } from 'react';
 
-import { createApiClient, apiGet, apiPost, apiDelete } from '@/lib/api-client';
+import { apiGet, apiPost, apiDelete } from '@/lib/api-client';
 import {
   Category,
   Comment,

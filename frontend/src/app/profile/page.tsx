@@ -1,15 +1,12 @@
 'use client';
 
-import { SignedIn, SignedOut, useAuth } from '@clerk/nextjs';
-import { useEffect, useMemo, useState } from 'react';
+import { SignedIn, SignedOut } from '@clerk/nextjs';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { apiGet, apiPatch, createApiClient } from '@/lib/api-client';
 import {
   ProfileFormValues,
   ProfileSchema,
-  UserResponse,
 } from './profile.schema';
 import { AlertCircle, Loader2, Save, User } from 'lucide-react';
 import {
