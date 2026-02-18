@@ -34,7 +34,7 @@ const MessageList = ({
     return (
       <div className="flex items-center justify-center py-12">
         <p className="text-xs text-muted-foreground">
-          No messages yet. Start the first initiative
+          No messages yet. Start the conversation
         </p>
       </div>
     );
@@ -46,7 +46,7 @@ const MessageList = ({
         const isOther = msg.senderUserId === otherUserIdValue;
         const label = isOther ? otherUserName : 'You';
 
-        const time = new Date(msg.createdAt).toLocaleDateString('en-US', {
+        const time = new Date(msg.createdAt).toLocaleTimeString('en-US', {
           hour: '2-digit',
           minute: '2-digit',
         });
@@ -77,7 +77,7 @@ const MessageList = ({
                       : 'bg-primary/80 text-primary-foreground'
                   }`}
                 >
-                  <p className="wrap-break-word text-[16px] leading-relaxed">
+                  <p className="break-word text-[16px] leading-relaxed">
                     {msg.body}
                   </p>
                 </div>
