@@ -47,7 +47,7 @@ export function useSocket(): UseSocketResult {
       setConnected(true);
     };
 
-    const handleDisconnect = (reason: any) => {
+    const handleDisconnect = () => {
       setConnected(false);
     };
 
