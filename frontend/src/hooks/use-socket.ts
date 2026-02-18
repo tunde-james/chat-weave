@@ -30,9 +30,8 @@ export function useSocket(): UseSocketResult {
       return;
     }
 
-    const baseUrl = 'http://localhost:3000/';
-
-    console.log(`[Socket], ${baseUrl}, ${userId}`);
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3000';
 
     const socketInstance: Socket = io(baseUrl, {
       auth: { userId }, // Backend is going to read the userId
@@ -48,8 +47,7 @@ export function useSocket(): UseSocketResult {
       setConnected(true);
     };
 
-    const handleDisconnect = (reason: any) => {
-      console.log(`[Socket], ${socketInstance.id}, ${reason}`);
+    const handleDisconnect = () => {
       setConnected(false);
     };
 
