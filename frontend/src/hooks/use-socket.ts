@@ -30,7 +30,8 @@ export function useSocket(): UseSocketResult {
       return;
     }
 
-    const baseUrl = 'http://localhost:3000/';
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3000';
 
     console.log(`[Socket], ${baseUrl}, ${userId}`);
 

@@ -25,6 +25,7 @@ const Chat = () => {
 
   useEffect(() => {
     let isMounted = true;
+    
     async function load() {
       setLoadingUsers(true);
 
@@ -39,7 +40,7 @@ const Chat = () => {
           handle: row.handle ?? null,
           avatarUrl: row.avatarUrl ?? null,
         }));
-        
+
         setUsers(finalRes);
 
         if (res.length > 0 && activeUserId === null) {

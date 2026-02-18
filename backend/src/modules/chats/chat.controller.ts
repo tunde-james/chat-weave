@@ -3,7 +3,10 @@ import type { Request, Response } from 'express';
 import { getAuth } from '../../config/clerk';
 import { BadRequestError, UnauthorizedError } from '../../lib/app-error';
 import { getUserFromClerk } from '../users/user.service';
-import { listChatUsers, listDirectMessages } from './chat.service';
+import {
+  listChatUsers,
+  listDirectMessages,
+} from './chat.service';
 
 /**
  * @swagger

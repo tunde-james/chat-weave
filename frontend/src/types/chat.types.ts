@@ -9,6 +9,7 @@ export type ChatUser = {
 
 export type DirectMessage = {
   id: number;
+  tempId?: number;
   senderUserId: number;
   recipientUserId: number;
   body: string | null;
@@ -31,6 +32,7 @@ export type RawDirectMessage = Record<string, any>;
 export function mapDirectMessage(r: RawDirectMessage): DirectMessage {
   return {
     id: Number(r.id),
+    tempId: r.tempId ? Number(r.tempId) : undefined,
     senderUserId: Number(r.senderUserId ?? r.sender_user_id),
     recipientUserId: Number(r.recipientUserId ?? r.recipient_user_id),
     body: r.body ?? null,
@@ -62,8 +64,8 @@ export function mapDirectMessagesResponse(res: unknown): DirectMessage[] {
 }
 
 export type DirectChatPanelProps = {
+  otherUser: ChatUser;
   otherUserId: number;
-  otherUser: ChatUser | null;
   socket: Socket | null;
   connected: boolean;
 };
